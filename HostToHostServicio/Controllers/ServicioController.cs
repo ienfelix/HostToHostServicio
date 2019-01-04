@@ -8,7 +8,6 @@ using System.Web.Http;
 
 namespace HostToHostServicio.Controllers
 {
-    [AllowAnonymous]
     public class ServicioController : ApiController
     {
         private ServicioNE _servicioNE = null;

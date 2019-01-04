@@ -7,16 +7,14 @@ namespace HostToHostServicio
     {
         public static void Register(HttpConfiguration config)
         {
-            // Configuración y servicios de API web
-
-            // Rutas de API web
             config.MapHttpAttributeRoutes();
 
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
                 routeTemplate: "api/{controller}/{id}",
-                defaults: new { id = RouteParameter.Optional }
+                defaults: new { id = RouteParameter.Optional, @namespace = "api" }
             );
+
             config.Routes.MapHttpRoute(
                 name: "ServicioApi",
                 routeTemplate: "api/{controller}/{idSociedad}/{anio}/{momentoOrden}/{idEstadoOrden}/{idSap}/{usuario}"

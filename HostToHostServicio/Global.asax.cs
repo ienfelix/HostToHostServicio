@@ -1,4 +1,5 @@
-﻿using System.Web.Http;
+﻿using HostToHostServicio.App_Start;
+using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Routing;
 
@@ -10,6 +11,7 @@ namespace HostToHostServicio
         {
             AreaRegistration.RegisterAllAreas();
             GlobalConfiguration.Configure(WebApiConfig.Register);
+            RouteConfig.RegisterRoutes(RouteTable.Routes);
         }
     }
 }
