@@ -11,7 +11,6 @@ namespace HostToHostServicio.Controllers
     public class ServicioController : ApiController
     {
         private ServicioNE _servicioNE = null;
-        public String sapName = String.Empty;
 
         public ServicioController()
         {

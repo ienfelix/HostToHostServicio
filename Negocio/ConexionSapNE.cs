@@ -24,9 +24,9 @@ namespace Negocio
             RespuestaMO respuestaMO = null;
             try
             {
-                DateTime? fecha = await ConvertirCadenaAFechaAsync(cancelToken, momentoOrden).ConfigureAwait(Constante.AWAITER);
+                DateTime? fecha = ConvertirCadenaHaciaFechaAsync(momentoOrden);
                 RfcDestinationManager.RegisterDestinationConfiguration(_conexionSap);
-                RfcConfigParameters rfcConfigParameters = await GetParametersAsync(cancelToken).ConfigureAwait(Constante.AWAITER);
+                RfcConfigParameters rfcConfigParameters = GetParametersAsync();
                 RfcDestination rfcDestination = RfcDestinationManager.GetDestination(rfcConfigParameters[RfcConfigParameters.Name]);
                 RfcRepository rfcRepository = rfcDestination.Repository;
                 IRfcFunction rfcFunction = rfcRepository.CreateFunction(Constante.FUNCTION_YFIRFC_ACTSTS_H2H);
@@ -38,7 +38,7 @@ namespace Negocio
                 rfcFunction.SetValue(Constante.IP_USNAM, usuario);
                 rfcFunction.Invoke(rfcDestination);
                 IRfcStructure rfcStructureReturn = rfcFunction.GetStructure(Constante.EW_MENSG);
-                respuestaMO = await MapearEstructuraAModeloAsync(cancelToken, rfcStructureReturn).ConfigureAwait(Constante.AWAITER);
+                respuestaMO = MapearEstructuraHaciaModeloAsync(rfcStructureReturn);
                 String mensaje = respuestaMO.IdRespuesta == Constante.TYPE_SUCCESS ? Constante.MENSAJE_ENVIAR_ESTADO_PROCESO_HOSTTOHOST_ASYNC_OK : Constante.MENSAJE_ENVIAR_ESTADO_PROCESO_HOSTTOHOST_ASYNC_NO_OK;
                 await _bitacora.RegistrarEventoAsync(cancelToken, Constante.BITACORA_NOTIFICACION, Constante.PROYECTO_NEGOCIO, Constante.CLASE_CONEXION_SAP_NE, Constante.METODO_ENVIAR_ESTADO_PROCESO_HOSTTOHOST_ASYNC, mensaje);
             }
@@ -54,7 +54,7 @@ namespace Negocio
             return respuestaMO;
         }
 
-        public async Task<RfcConfigParameters> GetParametersAsync(CancellationToken cancelToken)
+        public RfcConfigParameters GetParametersAsync()
         {
             RfcConfigParameters rfcConfigParameters = new RfcConfigParameters();
             try
@@ -77,44 +77,36 @@ namespace Negocio
                 rfcConfigParameters.Add(RfcConfigParameters.Client, _sapClient);
                 rfcConfigParameters.Add(RfcConfigParameters.Language, _sapLanguage);
                 rfcConfigParameters.Add(RfcConfigParameters.PoolSize, _sapPoolSize);
-                Boolean isRegistered = _conexionSap.AddOrEditDestination(rfcConfigParameters);
-                String mensaje = isRegistered ? Constante.MENSAJE_GET_PARAMETERS_ASYNC_OK : Constante.MENSAJE_GET_PARAMETERS_ASYNC_NO_OK;
-                await _bitacora.RegistrarEventoAsync(cancelToken, Constante.BITACORA_NOTIFICACION, Constante.PROYECTO_NEGOCIO, Constante.CLASE_CONEXION_SAP_NE, Constante.METODO_GET_PARAMETERS_ASYNC, mensaje);
+                _conexionSap.AddOrEditDestination(rfcConfigParameters);
             }
             catch (Exception e)
             {
-                await _bitacora.RegistrarEventoAsync(cancelToken, Constante.BITACORA_ERROR, Constante.PROYECTO_NEGOCIO, Constante.CLASE_CONEXION_SAP_NE, Constante.METODO_GET_PARAMETERS_ASYNC, Constante.MENSAJE_GET_PARAMETERS_ASYNC_NO_OK, e.Message);
                 throw e;
             }
             return rfcConfigParameters;
         }
 
-        private async Task<RespuestaMO> MapearEstructuraAModeloAsync(CancellationToken cancelToken, IRfcStructure rfcStructureReturn)
+        private RespuestaMO MapearEstructuraHaciaModeloAsync(IRfcStructure rfcStructureReturn)
         {
-            RespuestaMO respuestaMO = null;
+            RespuestaMO respuestaMO = respuestaMO = new RespuestaMO();
             try
             {
-                String tipo = rfcStructureReturn.GetString(Constante.TIPO);
-                String mensaje = rfcStructureReturn.GetString(Constante.MENSAJE);
+                String tipo = rfcStructureReturn.GetString(Constante.TIPO) ?? String.Empty;
+                String mensaje = rfcStructureReturn.GetString(Constante.MENSAJE) ?? String.Empty;
                 if (tipo != String.Empty)
                 {
-                    respuestaMO = new RespuestaMO();
                     respuestaMO.IdRespuesta = tipo;
                     respuestaMO.Respuesta = mensaje;
                 }
-                
-                mensaje = tipo != String.Empty ? Constante.MENSAJE_MAPEAR_ESTRUCTURA_A_MODELO_ASYNC_OK : Constante.MENSAJE_MAPEAR_ESTRUCTURA_A_MODELO_ASYNC_NO_OK;
-                await _bitacora.RegistrarEventoAsync(cancelToken, Constante.BITACORA_NOTIFICACION, Constante.PROYECTO_NEGOCIO, Constante.CLASE_CONEXION_SAP_NE, Constante.METODO_MAPEAR_ESTRUCTURA_A_MODELO, mensaje);
             }
             catch (Exception e)
             {
-                await _bitacora.RegistrarEventoAsync(cancelToken, Constante.BITACORA_ERROR, Constante.PROYECTO_NEGOCIO, Constante.CLASE_CONEXION_SAP_NE, Constante.METODO_MAPEAR_ESTRUCTURA_A_MODELO, Constante.MENSAJE_MAPEAR_ESTRUCTURA_A_MODELO_ASYNC_NO_OK, e.Message);
                 throw e;
             }
             return respuestaMO;
         }
 
-        private async Task<DateTime?> ConvertirCadenaAFechaAsync(CancellationToken cancelToken, String momentoOrden)
+        private DateTime? ConvertirCadenaHaciaFechaAsync(String momentoOrden)
         {
             DateTime? fecha = null;
             try
@@ -129,13 +121,13 @@ namespace Negocio
                 {
                     fecha = new DateTime(year, month, day);
                 }
-
-                String mensaje = fecha != null ? Constante.MENSAJE_CONVERTIR_CADENA_A_FECHA_ASYNC_OK : Constante.MENSAJE_CONVERTIR_CADENA_A_FECHA_ASYNC_NO_OK;
-                await _bitacora.RegistrarEventoAsync(cancelToken, Constante.BITACORA_NOTIFICACION, Constante.PROYECTO_NEGOCIO, Constante.CLASE_CONEXION_SAP_NE, Constante.METODO_CONVERTIR_CADENA_A_FECHA_ASYNC, mensaje);
+                else
+                {
+                    fecha = new DateTime();
+                }
             }
             catch (Exception e)
             {
-                await _bitacora.RegistrarEventoAsync(cancelToken, Constante.BITACORA_ERROR, Constante.PROYECTO_NEGOCIO, Constante.CLASE_CONEXION_SAP_NE, Constante.METODO_CONVERTIR_CADENA_A_FECHA_ASYNC, Constante.MENSAJE_CONVERTIR_CADENA_A_FECHA_ASYNC_NO_OK, e.Message);
                 throw e;
             }
             return fecha;
