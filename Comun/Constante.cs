@@ -21,6 +21,7 @@ namespace Comun
         public static String IP_BSTAT = "IP_BSTAT";
         public static String IP_REF1 = "IP_REF1";
         public static String IP_USNAM = "IP_USNAM";
+        public static String IP_TIPO = "IP_TIPO";
         public static String EW_MENSG = "EW_MENSG";
         public static String TIPO = "TIPO";
         public static String MENSAJE = "MENSAJE";

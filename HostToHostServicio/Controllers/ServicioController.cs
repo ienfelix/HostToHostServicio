@@ -24,12 +24,12 @@ namespace HostToHostServicio.Controllers
         }
 
         [HttpGet]
-        public async Task<RespuestaMO> Get(String idSociedad, String anio, String momentoOrden, String idEstadoOrden, String idSap, String usuario)
+        public async Task<RespuestaMO> Get(String idSociedad, String anio, String momentoOrden, String idEstadoOrden, String idSap, String usuario, String tipoOrden)
         {
             RespuestaMO respuestaMO = null;
             try
             {
-                respuestaMO = await _servicioNE.EnviarEstadoProcesoHostToHostAsync(new CancellationToken(false), idSociedad, anio, momentoOrden, idEstadoOrden, idSap, usuario);
+                respuestaMO = await _servicioNE.EnviarEstadoProcesoHostToHostAsync(new CancellationToken(false), idSociedad, anio, momentoOrden, idEstadoOrden, idSap, usuario, tipoOrden);
             }
             catch (Exception e)
             {

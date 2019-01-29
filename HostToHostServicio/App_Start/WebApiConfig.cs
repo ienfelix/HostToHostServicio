@@ -17,7 +17,7 @@ namespace HostToHostServicio
 
             config.Routes.MapHttpRoute(
                 name: "ServicioApi",
-                routeTemplate: "api/{controller}/{idSociedad}/{anio}/{momentoOrden}/{idEstadoOrden}/{idSap}/{usuario}"
+                routeTemplate: "api/{controller}/{idSociedad}/{anio}/{momentoOrden}/{idEstadoOrden}/{idSap}/{usuario}/{tipoOrden}"
             );
 
             var jsonFormatter = config.Formatters.JsonFormatter;

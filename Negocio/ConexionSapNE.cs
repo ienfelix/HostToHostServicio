@@ -19,7 +19,7 @@ namespace Negocio
             _conexionSap = _conexionSap ?? new ConexionSap();
         }
 
-        public async Task<RespuestaMO> EnviarEstadoProcesoHostToHostAsync(CancellationToken cancelToken, String idSociedad, String anio, String momentoOrden, String idEstadoOrden, String idSap, String usuario)
+        public async Task<RespuestaMO> EnviarEstadoProcesoHostToHostAsync(CancellationToken cancelToken, String idSociedad, String anio, String momentoOrden, String idEstadoOrden, String idSap, String usuario, String tipoOrden)
         {
             RespuestaMO respuestaMO = null;
             try
@@ -36,6 +36,7 @@ namespace Negocio
                 rfcFunction.SetValue(Constante.IP_BSTAT, idEstadoOrden);
                 rfcFunction.SetValue(Constante.IP_REF1, idSap);
                 rfcFunction.SetValue(Constante.IP_USNAM, usuario);
+                rfcFunction.SetValue(Constante.IP_TIPO, tipoOrden);
                 rfcFunction.Invoke(rfcDestination);
                 IRfcStructure rfcStructureReturn = rfcFunction.GetStructure(Constante.EW_MENSG);
                 respuestaMO = MapearEstructuraHaciaModeloAsync(rfcStructureReturn);

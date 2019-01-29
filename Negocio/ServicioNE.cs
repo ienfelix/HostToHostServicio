@@ -17,12 +17,12 @@ namespace Negocio
             _conexionSapNE = _conexionSapNE ?? new ConexionSapNE();
         }
 
-        public async Task<RespuestaMO> EnviarEstadoProcesoHostToHostAsync(CancellationToken cancelToken, String idSociedad, String anio, String momentoOrden, String idEstadoOrden, String idSap, String usuario)
+        public async Task<RespuestaMO> EnviarEstadoProcesoHostToHostAsync(CancellationToken cancelToken, String idSociedad, String anio, String momentoOrden, String idEstadoOrden, String idSap, String usuario, String tipoOrden)
         {
             RespuestaMO respuestaMO = null;
             try
             {
-                respuestaMO = await _conexionSapNE.EnviarEstadoProcesoHostToHostAsync(cancelToken, idSociedad, anio, momentoOrden, idEstadoOrden, idSap, usuario);
+                respuestaMO = await _conexionSapNE.EnviarEstadoProcesoHostToHostAsync(cancelToken, idSociedad, anio, momentoOrden, idEstadoOrden, idSap, usuario, tipoOrden);
                 String mensaje = respuestaMO.IdRespuesta == Constante.TYPE_SUCCESS ? Constante.MENSAJE_ENVIAR_ESTADO_PROCESO_HOSTTOHOST_ASYNC_OK : Constante.MENSAJE_ENVIAR_ESTADO_PROCESO_HOSTTOHOST_ASYNC_NO_OK;
                 await _bitacora.RegistrarEventoAsync(cancelToken, Constante.BITACORA_NOTIFICACION, Constante.PROYECTO_NEGOCIO, Constante.CLASE_SERVICIO_NE, Constante.METODO_ENVIAR_ESTADO_PROCESO_HOSTTOHOST_ASYNC, mensaje);
             }
